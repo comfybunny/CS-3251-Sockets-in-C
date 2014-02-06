@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
     
     // convert string to integer needs to be unsigned short
     servPort = (unsigned short)(atoi(argv[1]));
-    /* Create new TCP Socket for incoming requests*/
+    /* Create new Socket for incoming requests*/
 
     // socket takes 3 arguments: domain, type, protocol
     // domain: protocol family of the created socket

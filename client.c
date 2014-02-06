@@ -80,7 +80,7 @@ int main(int argc, char *argv[])
     int rtnVal = inet_pton(AF_INET, servIP, &servAddr.sin_addr.s_addr);
     if(rtnVal == 0){
         // DieWithSystemMessage("inet_pton() failed", "invalid address string");
-        perror("inet_pton() failed invalid address string");
+        perror("inet_pton() failed invalid address string... Closing socket.");
         close(sock);
         exit(EXIT_FAILURE);   
     }
@@ -97,7 +97,7 @@ int main(int argc, char *argv[])
     /* Establish connecction to the server */
     if(connect(sock, (struct sockaddr *) &servAddr, sizeof(servAddr)) < 0){
         // DieWithSystemMessage("connect() failed");
-        perror("connect() failed");
+        perror("connect() failed... Check Port Number");
         close(sock);
         exit(EXIT_FAILURE);
 
@@ -156,3 +156,19 @@ int main(int argc, char *argv[])
 // win scp
 // windows is not posix
 // cygwin gives you posix on windows
+
+
+
+// ~FROM PIAZZA~
+// To open a remote secure shell on one of them you would go to your terminal/shell/whatever and do (with your username):
+// $ ssh pmallory3@shuttle4.cc.gatech.edu
+// The $ is the command prompt, don't type that yourself. If the server was up it would ask for a password at this point. Then you'd have a secure remote shell running on the shuttle server. You could type commands and run programs the same way as you do on your local machine, except it'd all run on the remote server.
+ 
+// To copy a file to the remote server from your machine you can do:
+// $ scp server.c pmallory3@shuttle4.cc.gatech.edu:/path/on/server/to/deposit/file 
+// Run that on your local computer, not in the secure shell.
+
+// do I need to check for range of port numbers?
+// check IP address format?
+// is it okay I send bal as text?
+// random arguements?

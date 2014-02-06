@@ -1,0 +1,32 @@
+-bash-4.1$ ./server 3251
+
+
+-bash-4.1$ ./client COUNT mySavings 130.207.114.22 3251
+mySavings COUNT  0
+-bash-4.1$ ./client BAL mySavings 130.207.114.22 3251
+mySavings BALANCE  1000
+-bash-4.1$ ./client BAL myRetirement 130.207.114.22 3251
+myRetirement BALANCE  3000
+-bash-4.1$ ./client BAL myCollege 130.207.114.22 3251
+myCollege BALANCE  4000
+-bash-4.1$ ./client BAL myChecking 130.207.114.22 3251
+myChecking BALANCE  2000
+-bash-4.1$ ./client BAL myChecking 130.207.114.22 3251
+myChecking BALANCE  2000
+-bash-4.1$ ./client BAL myChecking 130.207.114.22 3251
+myChecking BALANCE  2000
+-bash-4.1$ ./client COUNT myChecking 130.207.114.22 3251
+myChecking COUNT  3
+-bash-4.1$ ./client COUNT myChecking 130.207.114.222 3251
+connect() failed... Check Port Number: No route to host
+-bash-4.1$ ./client COUNT myChecking 130.207.114.22 3250
+connect() failed... Check Port Number: Connection refused
+-bash-4.1$ ./client COUNTING myChecking 130.207.114.22 3251
+YOU FAILED TO GIVE CORRECT PROMPT. Please try again.
+-bash-4.1$ ./client BAL myCheckings 130.207.114.22 3251
+YOU FAILED TO GIVE CORRECT PROMPT. Please try again.
+-bash-4.1$ ./client COUNT myChecking 130.207.114.22 3251
+myChecking COUNT  3
+
+
+
