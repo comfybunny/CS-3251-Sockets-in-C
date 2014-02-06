@@ -26,7 +26,7 @@
 int main(int argc, char *argv[])
 {
 
-    int clientSock;		    /* socket descriptor */
+    int sock;		    /* socket descriptor */
     struct sockaddr_in serv_addr;   /* server address structure */
 
     char *accountName;		    /* Account Name  */
@@ -61,7 +61,10 @@ int main(int argc, char *argv[])
     /* Create a new TCP socket*/
     int sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     if(sock<0){
-        DieWithSystemMessage("socket() failed");
+        // DieWithSystemMessage("socket() failed");
+        perror("socket() failed");
+        // close(servSock);
+        exit(EXIT_FAILURE);
     }
 
 
@@ -87,7 +90,11 @@ int main(int argc, char *argv[])
 
     /* Establish connecction to the server */
     if(connect(sock, (struct sockaddr *) &servAddr, sizeof(servAddr)) < 0){
-        DieWithSystemMessage("connect() failed");
+        // DieWithSystemMessage("connect() failed");
+        perror("connect() failed");
+        close(sock);
+        exit(EXIT_FAILURE);
+
     }
      // determine input length
     // echoString TODO send buffer instead of echoString
@@ -101,7 +108,10 @@ int main(int argc, char *argv[])
 
     ssize_t numBytes = send(sock, sndBuf, SNDBUFSIZE, 0);
     if(numBytes < 0){
-        DieWithSystemMessage("send() failed");
+        // DieWithSystemMessage("send() failed");
+        perror("send() failed... TRY AGAIN");
+        close(sock);
+        exit(EXIT_FAILURE);
     }
     // TODO ECHOLENGTH WHAT ERROR IS BUFFER SIZE THING NOT EQUAL TO NUMBYTES
 

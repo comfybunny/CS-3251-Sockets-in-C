@@ -179,7 +179,7 @@ int main(int argc, char *argv[])
         // struct sockaddr_in clntAddr;
         // set length of client address structure
 
-        socketlen_t clntAddrLen = sizeof(clntAddr);
+        unsigned int clntAddrLen = sizeof(clntAddr);
 
         // now wait for a client to connect
 
