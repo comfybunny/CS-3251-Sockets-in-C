@@ -243,7 +243,7 @@ int main(int argc, char *argv[])
 
         // strcmp return 0 if same value; 
         if(strcmp("BAL mySavings", rcvBuf)==0){
-            countBalance++;
+            countSaving++;
             balance = 1000;
             snprintf(sndBuf, SNDBUFSIZE, "mySavings BALANCE  %d", balance);
 

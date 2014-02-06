@@ -19,10 +19,10 @@ ifeq ($(OS), SunOS)
 all: client server 
 
 client: client.c
-	$(CC) client.c -o nameChanger
+	$(CC) client.c -o client
 
 server: server.c
-	$(CC) -lcrypto server.c -o changeServer
+	$(CC) server.c -o server
 
 clean:
 	    rm -f client server *.o

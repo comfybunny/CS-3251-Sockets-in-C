@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
     int balance;		    /* Account balance */
 
     /* Get the Account Name from the command line */
-    if (argc != 4){
+    if (argc != 5){
 	   printf("Incorrect number of arguments. The correct format is:\n\t BAL/COUNT + accountName + serverIP + serverPort");
 	   exit(1);
     }
@@ -59,7 +59,7 @@ int main(int argc, char *argv[])
 
 
     /* Create a new TCP socket*/
-    int sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     if(sock<0){
         // DieWithSystemMessage("socket() failed");
         perror("socket() failed");
@@ -79,10 +79,16 @@ int main(int argc, char *argv[])
     // inet_pton sets servAddr.sin_addr.s_addr part of struct based on servIP
     int rtnVal = inet_pton(AF_INET, servIP, &servAddr.sin_addr.s_addr);
     if(rtnVal == 0){
-        DieWithSystemMessage("inet_pton() failed", "invalid address string");
+        // DieWithSystemMessage("inet_pton() failed", "invalid address string");
+        perror("inet_pton() failed invalid address string");
+        close(sock);
+        exit(EXIT_FAILURE);   
     }
     else if(rtnVal < 0){
-        DieWithSystemMessage("inet_pton() failed");
+        // DieWithSystemMessage("inet_pton() failed");
+        perror("inet_pton() failed");
+        close(sock);
+        exit(EXIT_FAILURE);  
     }
     servAddr.sin_port = htons(servPort);        // server port
 
