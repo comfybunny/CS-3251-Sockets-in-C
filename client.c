@@ -1,4 +1,4 @@
-/*///////////////////////////////////////////////////////////
+    /*///////////////////////////////////////////////////////////
 *
 * FILE:		client.c
 * AUTHOR:	Xialin Yan
@@ -33,6 +33,7 @@ int main(int argc, char *argv[])
     char *servIP;		    /* Server IP address  */
     unsigned short servPort;	    /* Server Port number */
     
+    char *balCount;
 
     char sndBuf[SNDBUFSIZE];	    /* Send Buffer */
     char rcvBuf[RCVBUFSIZE];	    /* Receive Buffer */
@@ -41,15 +42,19 @@ int main(int argc, char *argv[])
 
     /* Get the Account Name from the command line */
     if (argc != 4){
-	   printf("Incorrect number of arguments. The correct format is:\n\taccountName serverIP serverPort");
+	   printf("Incorrect number of arguments. The correct format is:\n\t BAL/COUNT + accountName + serverIP + serverPort");
 	   exit(1);
     }
-    accountName = argv[1];
+    balCount = argv[1];
+    accountName = argv[2];
+    servIP = argv[3];
+    servPort = atoi(argv[4]);
     memset(&sndBuf, 0, SNDBUFSIZE);
     memset(&rcvBuf, 0, RCVBUFSIZE);
 
     /* Get the addditional parameters from the command line */
     /*	    FILL IN	*/
+
 
 
 
@@ -59,24 +64,79 @@ int main(int argc, char *argv[])
         DieWithSystemMessage("socket() failed");
     }
 
+
+
     /* Construct the server address structure */
-    /*	    FILL IN	 */
+    struct sockaddr_in servAddr;
+    memset(&servAddr, 0, sizeof(servAddr));
+    servAddr.sin_family = AF_INET;
+    // convert address
+    // inet_pton - convert IPv4 and IPv6 addresses from text to binary form
+
+    // inet_pton sets servAddr.sin_addr.s_addr part of struct based on servIP
+    int rtnVal = inet_pton(AF_INET, servIP, &servAddr.sin_addr.s_addr);
+    if(rtnVal == 0){
+        DieWithSystemMessage("inet_pton() failed", "invalid address string");
+    }
+    else if(rtnVal < 0){
+        DieWithSystemMessage("inet_pton() failed");
+    }
+    servAddr.sin_port = htons(servPort);        // server port
+
 
 
     /* Establish connecction to the server */
-    /*	    FILL IN	 */
+    if(connect(sock, (struct sockaddr *) &servAddr, sizeof(servAddr)) < 0){
+        DieWithSystemMessage("connect() failed");
+    }
+     // determine input length
+    // echoString TODO send buffer instead of echoString
+    // TODO fill send buffer with commands snprintf()
+    // connected now you can send
 
+    // TODO NEEDS TO PUT THINGS IN SENDBUFFER
     
     /* Send the string to the server */
-    /*	    FILL IN	 */
+    snprintf(sndBuf, SNDBUFSIZE, "%s %s", balCount, accountName);
 
+    ssize_t numBytes = send(sock, sndBuf, SNDBUFSIZE, 0);
+    if(numBytes < 0){
+        DieWithSystemMessage("send() failed");
+    }
+    // TODO ECHOLENGTH WHAT ERROR IS BUFFER SIZE THING NOT EQUAL TO NUMBYTES
 
     /* Receive and print response from the server */
-    /*	    FILL IN	 */
 
-    printf("%s\n", accountName);
-    printf("Balance is: %i\n", balance);
+    int recvSize = recv(sock, rcvBuf, RCVBUFSIZE, 0);
+    if(recvSize==-1){
+        perror("recv() error");
+        exit(1);
+    }
 
+    // TODO HOW TO DO BUFFER THINGS
+    // printf("client: received '%s'\n",rcvBuf);
+
+    
+    // unsigned int totalBytesRcvd = 0;    // count of total bytes received
+    
+
+
+    // balCount = argv[1];
+    // accountName = argv[2];
+    // servIP = argv[3];
+    // servPort = atoi(argv[4]);
+
+
+    printf("%s\n", *rcvBuf);
+
+    close(sock);
+    
     return 0;
 }
 
+
+
+// putty 
+// win scp
+// windows is not posix
+// cygwin gives you posix on windows
