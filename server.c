@@ -27,8 +27,8 @@ static const int MAXPENDING = 5;    // Maximum outstanding connection requests
 int main(int argc, char *argv[])
 {
 
-    int serverSock;				/* Server Socket */
-    int clientSock;				/* Client Socket */
+    int servSock;				/* Server Socket */
+    int clntSock;				/* Client Socket */
     struct sockaddr_in servAddr;		/* Local address */
     struct sockaddr_in clntAddr;		/* Client address */
     unsigned short servPort;		/* Server port */
@@ -76,11 +76,11 @@ int main(int argc, char *argv[])
 
     servSock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     if(servSock<0){
-        DieWithSystemMessage("socket() failed");
+        //DieWithSystemMessage("socket() failed");
         // perror() -> posted straight to command prompt; not buffered
-        //perror("socket() failed");
+        perror("socket() failed");
         //close(servSock);
-        //exit(EXIT_FAILURE);
+        exit(EXIT_FAILURE);
     }
 
 
@@ -139,7 +139,10 @@ int main(int argc, char *argv[])
 
     // bind address and port because the socket doesn't know yet; socket only knew type of connection
     if(bind(servSock,(struct sockaddr*) &servAddr, sizeof(servAddr))<0){
-        DieWithSystemMessage("bind() failed");
+        // DieWithSystemMessage("bind() failed");
+        perror("bind() failed");
+        close(servSock);
+        exit(EXIT_FAILURE);
     }
 
 
@@ -156,7 +159,11 @@ int main(int argc, char *argv[])
     
     // starts actual socket
     if(listen(servSock, MAXPENDING)<0){
-        DieWithSystemMessage("listen() failed");
+        // DieWithSystemMessage("listen() failed");
+        // perror prints my message then errno message
+        perror("listen() failed");
+        close(servSock);
+        exit(EXIT_FAILURE);
     }
 
 
@@ -172,7 +179,7 @@ int main(int argc, char *argv[])
         // struct sockaddr_in clntAddr;
         // set length of client address structure
 
-        socketln_t clntAddrLen = sizeof(clntAddr);
+        socketlen_t clntAddrLen = sizeof(clntAddr);
 
         // now wait for a client to connect
 
@@ -189,7 +196,10 @@ int main(int argc, char *argv[])
             // errno is a number with a defined message
             // if error close(socket)
             // exit(EXIT_FAILURE) -> returns from program
-            DieWithSystemMessage("accept() failed");
+            // DieWithSystemMessage("accept() failed");
+            perror("Client socket() failed... Closing Server");
+            close(servSock);
+            exit(EXIT_FAILURE);
         }
     
 
@@ -219,6 +229,12 @@ int main(int argc, char *argv[])
         // rcvBuf is already a pointer because... char array == char pointer
         // TODO sending/rcving server or client QUESTION
         int recvSize = recv(clntSock, rcvBuf, RCVBUFSIZE, 0);
+        if(clntSock==-1){
+            perror("recv() failed.. Closing server... Nothing to do.");
+            close(servSock);
+            exit(EXIT_FAILURE);
+        }
+        // send&recv check packetSize things
         // recv() give buffer length 
         // pass in array in length function can't tell size of
 
@@ -261,11 +277,10 @@ int main(int argc, char *argv[])
         else if(strcmp("COUNT myCollege", rcvBuf)==0){
             snprintf(sndBuf, SNDBUFSIZE, "myCollege COUNT  %d", countCollege);
         }
+        // else is a BAD COMMAND
         else{
             // perror() -> posted straight to command prompt; not buffered
-            perror("socket() failed");
-            close(servSock);
-            exit(EXIT_FAILURE);
+            snprintf(sndBuf, SNDBUFSIZE, "YOU FAILED TO GIVE CORRECT PROMPT. Please try again.");
         }
 
 	/* Return account balance to client */
@@ -276,7 +291,7 @@ int main(int argc, char *argv[])
         // if you have a pointer and put a star in front of it, dereference
         // & gets you the address of a thing
         // TODO TRY TO USE SENND BUFFER
-        int sentSize = send(clntSock, &balance, sizeof(&balance), 0);
+        int sentSize = send(clntSock, sndBuf, SNDBUFSIZE, 0);
         // at the end of while loop need to close client connection socket
         // then loops back and make a new one
 

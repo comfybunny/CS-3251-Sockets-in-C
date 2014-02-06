@@ -126,8 +126,8 @@ int main(int argc, char *argv[])
     // servIP = argv[3];
     // servPort = atoi(argv[4]);
 
-
-    printf("%s\n", *rcvBuf);
+    // *rcvBuf dereferences it and it makes it gives first element
+    printf("%s\n", rcvBuf);
 
     close(sock);
     
